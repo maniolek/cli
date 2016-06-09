@@ -2,7 +2,7 @@ CLI for Vegas CMF 2.0
 ===========================
 
 [![Travis Status](https://travis-ci.org/maniolek/cli.svg)](https://travis-ci.org/maniolek/cli)
-[![Coverage Status](https://coveralls.io/repos/github/maniolek/cli/badge.svg)](https://coveralls.io/github/maniolek/cli)
+[![Coverage Status](https://coveralls.io/repos/github/maniolek/cli/badge.svg?branch=master)](https://coveralls.io/github/maniolek/cli?branch=master)
 
 Compatible with: Phalcon >= 2.0
 
