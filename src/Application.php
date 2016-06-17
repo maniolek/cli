@@ -13,9 +13,7 @@ use Phalcon\Cli\Dispatcher;
 use Phalcon\Config;
 use Phalcon\Events\Manager;
 use Phalcon\Http\ResponseInterface;
-use Vegas\Mvc\ModuleManager;
-use Vegas\Mvc\ModuleManager\EventListener\Boot as ModuleManagerBootEventListener;
-use Vegas\Mvc\Router\EventListener\Boot as RouterBootEventListener;
+use Vegas\Cli\ModuleManager\EventListener\Boot as ModuleManagerBootEventListener;
 use Vegas\Mvc\Autoloader\EventListener\Boot as AutoloaderBootEventListener;
 use Vegas\Cli\Task\EventListener\Boot as TaskBootEventListener;
 use Vegas\Mvc\View\EventListener\Boot as ViewBootEventListener;
@@ -50,15 +48,12 @@ class Application extends \Vegas\Mvc\Application
         return $this;
     }
 
-    public function bootstrap()
+    public function __construct($dependencyInjector, Config $config)
     {
-        if (parent::bootstrap()) {
-            $this->console = new Console();
-            $this->console->setDI($this->di);
-            return true;
-        }
+        $this->console = new Console();
+        $this->console->setDI($dependencyInjector);
 
-        return false;
+        parent::__construct($dependencyInjector, $config);
     }
 
     /**
@@ -103,4 +98,11 @@ class Application extends \Vegas\Mvc\Application
         $this->arguments = $args;
     }
 
+    /**
+     * @return Console
+     */
+    public function getConsole()
+    {
+        return $this->console;
+    }
 }

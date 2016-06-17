@@ -67,7 +67,7 @@ class Loader
      * Resolves name of task class
      * The task classes placed in the following location will be resolved
      *      * php cli.php app:example ...       ->  app/tasks/ExampleTask.php
-     *      * php cli.php app:foo:example ...   ->  app/modules/Foo/tasks/ExampleTask.php
+     *      * php cli.php app:foo:example ...   ->  app/modules/Foo/Task/ExampleTask.php
      *      * php cli.php vegas:cli:example ... -> (vendor path)/vegas-cmf/core/Cli/Task/ExampleTask.php
      *
      * @param $arguments
@@ -166,23 +166,17 @@ class Loader
      */
     private function loadAppModuleTask($moduleName, $taskName)
     {
-//        $modules = $this->consoleApp->getModules();
-//        //checks if indicated module has been registered
-//        if (!isset($modules[$moduleName])) {
-//            throw new TaskNotFoundException();
-//        }
-
-        //creates full namespace for task class placed in application module
-        $fullNamespace = strtr('\:moduleName\Task\:taskName', array(
+        $fullNamespace = strtr('\:moduleName\Task\:taskName', [
             ':moduleName' => $moduleName,
             ':taskName' => $taskName
-        ));
+        ]);
 
-        $this->consoleApp->getDI()->get('dispatcher')->setNamespaceName(strtr(':moduleName\Task', [':moduleName' => $moduleName]));
-        //registers task class in Class Loader
+        $this->consoleApp->getDI()->get('dispatcher')->setNamespaceName(
+            strtr(':moduleName\Task', [':moduleName' => $moduleName])
+        );
+
         $this->registerClass($fullNamespace . self::TASK_NAME);
 
-        //returns converted name of task  (namespace of class containing task)
         return $taskName;
     }
 
@@ -195,14 +189,12 @@ class Loader
      */
     private function loadCoreTask(array $task)
     {
-        //creates full namespace for task placed in Vegas library
-        if (count($task) >= 3) {
+        if ($this->isVegasHelpTask($task)) {
+            $namespace = ucfirst($task[0]) . '\\Cli';
+            $taskName = ucfirst($task[1]);
+        } else {
             $namespace = $this->toNamespace($task);
             $taskName = ucfirst($task[count($task)-1]);
-        } else {
-            //for \Vegas namespace tasks are placed in \Vegas\Task namespace
-            $namespace = '';
-            $taskName = ucfirst($task[1]);
         }
 
         $fullNamespace = strtr(':namespace\:taskName', array(
@@ -217,5 +209,10 @@ class Loader
 
         //returns converted name of task (namespace of class containing task)
         return $taskName;
+    }
+
+    protected function isVegasHelpTask(array $task)
+    {
+        return $task == ['vegas', 'help'];
     }
 }

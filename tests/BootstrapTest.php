@@ -170,6 +170,20 @@ class BootstrapTest extends TestCase
         $this->assertContains('Available actions', $returnedValue);
     }
 
+    public function testShouldGetHelp()
+    {
+        $cli = $this->application;
+        $cli->setArguments(array(
+            0 => 'cli/cli.php',
+            1 => 'vegas:help',
+            2 => 'list'
+        ));
+
+        $returnedValue = $cli->handle()->getOutput();
+
+        //$this->assertSame('Vegas\Cli\HelpTask', $returnedValue);
+    }
+
     public function testShouldExecuteApplicationTask()
     {
         $cli = $this->application;
@@ -270,6 +284,30 @@ class BootstrapTest extends TestCase
         $returnedValue = $cli->handle()->getOutput();
 
         $this->assertContains('Vegas\Fake\Nested\FakeTask', $returnedValue);
+
+
+        $cli = $this->application;
+        $cli->setArguments(array(
+            0 => 'cli/cli.php',
+            1 => 'vegas:test',
+            2 => 'test'
+        ));
+
+        $returnedValue = $cli->handle()->getOutput();
+
+        $this->assertContains('test', $returnedValue);
+
+//        $cli = $this->application;
+//        $cli->setArguments(array(
+//            0 => 'cli/cli.php',
+//            1 => 'vegas:test:test',
+//            2 => 'test'
+//        ));
+//
+//        $returnedValue = $cli->handle()->getOutput();
+//
+//        $this->assertContains('test', $returnedValue);
+
     }
 
     public function testShouldThrowExceptionAboutNotExistingModuleTask()
