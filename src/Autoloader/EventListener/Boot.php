@@ -7,16 +7,16 @@
  * @homepage http://cmf.vegas
  */
 
-namespace Vegas\Cli\Task\EventListener;
+namespace Vegas\Cli\Autoloader\EventListener;
 
 use Phalcon\Events\Event;
 use Phalcon\Loader;
-use Vegas\Mvc\Application;
-use Vegas\Mvc\Application\BootEventListenerInterface;
+use Vegas\Cli\Application;
+use Vegas\Cli\BootEventListenerInterface;
 
 /**
  * Class Boot
- * @package Vegas\Mvc\Autoloader\EventListener
+ * @package Vegas\Cli\Autoloader\EventListener
  */
 class Boot implements BootEventListenerInterface
 {
@@ -42,10 +42,16 @@ class Boot implements BootEventListenerInterface
     public function getNamespaces(Application $application)
     {
         $namespaces = [];
-
         $config = $application->getConfig();
+
+        $directory = $application->getConfig()->application->modulesDirectory;
+
+        foreach ($config->application->modules as $key => $module) {
+            $namespaces[$module] = $directory . DIRECTORY_SEPARATOR . $module;
+        }
+
         if (isset($config->application->autoload)) {
-            $namespaces = $config->application->autoload->toArray();
+            $namespaces = array_merge($namespaces, $config->application->autoload->toArray());
         }
 
         return $namespaces;

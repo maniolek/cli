@@ -11,15 +11,14 @@ namespace Vegas\Cli\ModuleManager\EventListener;
 
 use Phalcon\Events\Event;
 use Vegas\Cli\Application;
-use Vegas\Mvc\ModuleManager;
+use Vegas\Cli\BootEventListenerInterface;
 
 /**
  * Class Boot
  * @package Vegas\Cli\ModuleManager\EventListener
  */
-class Boot
+class Boot implements BootEventListenerInterface
 {
-
     /**
      * @param Event $event
      * @param Application $application
@@ -27,16 +26,8 @@ class Boot
      */
     public function boot(Event $event, Application $application)
     {
-        $moduleManager = new ModuleManager($application);
-        $moduleManager->setModulesDirectory($application->getConfig()->application->modulesDirectory);
-
-        $modules = $application->getConfig()->application->modules;
-        $moduleManager->registerModules($modules ? $modules->toArray() : []);
-
         $modules = $this->getModules($application->getConfig());
         $application->getConsole()->registerModules($modules);
-
-        $application->getConfig()->merge($moduleManager->getConfigs($application->getModules()));
     }
 
     protected function getModules($config)
