@@ -43,7 +43,7 @@ class HelpTask extends \Vegas\Cli\TaskAbstract
         }
 
         if (count($declaredClasses)) {
-            $this->putText("If there's a missing tasks, make sure they have one of the following namespaces:" . $taskInfo);
+            $this->putText("\nIf there's a missing tasks, make sure they have one of the following namespaces:" . $taskInfo);
         }
 
     }
@@ -54,24 +54,8 @@ class HelpTask extends \Vegas\Cli\TaskAbstract
     protected function getAvailableTasks()
     {
         $response = [];
-        $directories = [];
 
-        $directories[] = [
-            'path' => APP_ROOT . '/app/tasks',
-            'namespace' => '\App\Task'
-        ];
-
-        $config = $this->getDI()->get('config');
-        $modules = $config->application->modules;
-
-        foreach ($modules as $module) {
-            $modulePath = APP_ROOT . DIRECTORY_SEPARATOR . $config->application->modulesDirectory .
-                DIRECTORY_SEPARATOR . $module . DIRECTORY_SEPARATOR . 'Task';
-            $directories[] = [
-                'path' => $modulePath,
-                'namespace' => '\\' . $module .'\Task'
-            ];
-        }
+        $directories = $this->getTasksDirectories();
 
         foreach ($directories as $directory) {
 
@@ -98,4 +82,53 @@ class HelpTask extends \Vegas\Cli\TaskAbstract
 
         return $response;
     }
+
+    protected function getTasksDirectories()
+    {
+        $_rootDirectory = APP_ROOT;
+        $directories = [];
+
+        $directories[] = [
+            'path' => $_rootDirectory . '/app/tasks',
+            'namespace' => '\App\Task'
+        ];
+
+        $config = $this->getDI()->get('config');
+        $modules = $config->application->modules;
+
+        foreach ($modules as $module) {
+            $modulePath = $_rootDirectory . DIRECTORY_SEPARATOR . $config->application->modulesDirectory .
+                DIRECTORY_SEPARATOR . $module . DIRECTORY_SEPARATOR . 'Task';
+            $directories[] = [
+                'path' => $modulePath,
+                'namespace' => '\\' . $module .'\Task'
+            ];
+        }
+
+        $vendorPath = $_rootDirectory . DIRECTORY_SEPARATOR . 'vendor/vegas-cmf';
+
+        $directoryIterator = new \DirectoryIterator($vendorPath);
+        foreach ($directoryIterator as $fileInfo) {
+
+            if (!$fileInfo->isDir()) {
+                continue;
+            }
+
+            $packageDirectory = $fileInfo->getPathname() . DIRECTORY_SEPARATOR . 'src/Task';
+
+            if (file_exists($packageDirectory)) {
+
+                $directories[] = [
+                    'path' => $packageDirectory,
+                    'namespace' => '\\Vegas\\' . $fileInfo->getFilename() . '\\Task'
+                ];
+
+            }
+
+        }
+
+        return $directories;
+    }
+
+
 }

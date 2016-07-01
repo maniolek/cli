@@ -6,6 +6,7 @@ include __DIR__ . "/../vendor/autoload.php";
 use Phalcon\Loader;
 
 define('TESTS_ROOT_DIR', dirname(__FILE__));
+define('APP_ROOT', dirname(__FILE__));
 $configArray = require_once TESTS_ROOT_DIR . '/fixtures/app/config/config.php';
 
 $_SERVER['HTTP_HOST'] = 'vegas.dev';
