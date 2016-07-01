@@ -83,6 +83,7 @@ class HelpTask extends \Vegas\Cli\TaskAbstract
         return $response;
     }
 
+
     protected function getTasksDirectories()
     {
         $_rootDirectory = APP_ROOT;
@@ -120,7 +121,7 @@ class HelpTask extends \Vegas\Cli\TaskAbstract
 
                 $directories[] = [
                     'path' => $packageDirectory,
-                    'namespace' => '\\Vegas\\' . $fileInfo->getFilename() . '\\Task'
+                    'namespace' => '\\Vegas\\' . ucfirst($fileInfo->getFilename()) . '\\Task'
                 ];
 
             }
@@ -129,6 +130,5 @@ class HelpTask extends \Vegas\Cli\TaskAbstract
 
         return $directories;
     }
-
 
 }
